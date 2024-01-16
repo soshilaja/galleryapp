@@ -1,24 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { useMemo, useContext, useEffect } from "react";
+import { Context } from "./context";
+import Card from "./components/Card";
+import Layout from "./components/Layout";
+import Firestore from "./handlers/firestore";
+import "./App.css";
+
+const { readDocs } = Firestore;
 
 function App() {
+  const { state } = useContext(Context);
+
+  const count = useMemo(() => {
+    return `You have ${state.items.length} photo${
+      state.items.length > 1 ? "s" : ""
+    } in your gallery`;
+  }, [state.items]);
+
+  useEffect(() => {
+    readDocs().then(console.log);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Layout>
+      <h1 className="text-center">Gallery App</h1>
+      {count}
+      <div className="row">
+        {state.items.map((item, index) => {
+          return <Card key={index} {...item} />;
+        })}
+      </div>
+    </Layout>
   );
 }
 
