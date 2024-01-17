@@ -9,7 +9,7 @@ import { db } from "../lib/firebase.config";
 
 const Firestore = {
   readDocs: (...args) => {
-    const [collection_name] = args
+    const [collection_name] = args;
     let docs = [];
     const ref = collection(db, "imagestock");
     return new Promise(async (resolve) => {
@@ -35,6 +35,7 @@ const Firestore = {
           title: inputs.title,
           path: inputs.path,
           createdAt: serverTimestamp(),
+          user: inputs.user,
         });
         resolve("new doc successfully inserted");
       } catch (error) {}

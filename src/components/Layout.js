@@ -1,12 +1,12 @@
 import { useContext } from "react";
-import {Context} from "../context"
+import { Context } from "../context/FirestoreContext";
 import React from "react";
 import Navbar from "./Navbar";
 import UploadForm from "./UploadForm";
 
-const Layout = ({ children}) => {
-  const {dispatch, state} = useContext(Context);
-   const toggle = (bool) => dispatch({ type: "collapse", payload: { bool } });
+const Layout = ({ children }) => {
+  const { dispatch, state } = useContext(Context);
+  const toggle = (bool) => dispatch({ type: "collapse", payload: { bool } });
   return (
     <>
       <Navbar />
@@ -19,10 +19,7 @@ const Layout = ({ children}) => {
           {state.isCollapsed ? "Close" : "+Add"}
         </button>
         <div className="clearfix mb-4"></div>
-        <UploadForm
-          inputs={state.inputs}
-          isVisible={state.isCollapsed}
-        />
+        <UploadForm inputs={state.inputs} isVisible={state.isCollapsed} />
         {children}
       </div>
     </>
