@@ -5,10 +5,10 @@ import Layout from "./components/Layout";
 import Firestore from "./handlers/firestore";
 import "./App.css";
 
-const { readDocs } = Firestore;
+
 
 function App() {
-  const { state } = useContext(Context);
+  const { state, read } = useContext(Context);
 
   const count = useMemo(() => {
     return `You have ${state.items.length} photo${
@@ -17,7 +17,7 @@ function App() {
   }, [state.items]);
 
   useEffect(() => {
-    readDocs().then(console.log);
+    read();
   }, []);
 
   return (
