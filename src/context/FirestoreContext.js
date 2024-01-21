@@ -1,4 +1,4 @@
-import { createContext, useReducer } from "react";
+import { createContext, useContext, useReducer } from "react";
 import Firestore from "../handlers/firestore";
 
 const { readDocs } = Firestore;
@@ -38,7 +38,7 @@ function reducer(state, action) {
       return {
         ...state,
         items: [state.inputs, ...state.items],
-        count: [action.payload, state.items.length + 1],
+        count: state.items.length + 1,
         inputs: { title: null, file: null, path: null },
       };
     case "setItems":
@@ -69,8 +69,14 @@ const Provider = ({ children }) => {
     dispatch({ type: "setItems", payload: { items } });
   };
   return (
-    <Context.Provider value={{ state, dispatch, read }}>{children}</Context.Provider>
+    <Context.Provider value={{ state, dispatch, read }}>
+      {children}
+    </Context.Provider>
   );
+};
+
+export const useFirestoreContext = () => {
+  return useContext(Context);
 };
 
 export default Provider;

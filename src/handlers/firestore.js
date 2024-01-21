@@ -16,7 +16,7 @@ const Firestore = {
       try {
         const snapsshots = await getDocs(ref);
         snapsshots.forEach((doc) => {
-          const d = { ...doc.data() };
+          const d = { ...doc.data(), id:doc.id };
           docs.push(d);
         });
         resolve(docs);
