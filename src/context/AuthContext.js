@@ -13,13 +13,18 @@ const Context = createContext();
 const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
-  const login = useCallback(() => {
-    signIn().then(setCurrentUser);
-  }, []);
-  const logout = useCallback(() => {
-    signOut().then(() => setCurrentUser(null));
-  }, []);
-  const authenticate = () => getCurrentUser().then(setCurrentUser);
+  const login = useCallback(() => signIn().then(() => setCurrentUser), []);
+
+  const logout = useCallback(
+    () => signOut().then(() => setCurrentUser(null)),
+    []
+  );
+
+  const authenticate = useCallback(
+    () => getCurrentUser().then(setCurrentUser),
+    []
+  );
+
   const value = useMemo(() => {
     return {
       login,

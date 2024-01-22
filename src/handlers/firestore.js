@@ -11,11 +11,11 @@ const Firestore = {
   readDocs: (...args) => {
     const [collection_name] = args;
     let docs = [];
-    const ref = collection(db, "imagestock");
+    const ref = collection(db, collection_name);
     return new Promise(async (resolve) => {
       try {
-        const snapsshots = await getDocs(ref);
-        snapsshots.forEach((doc) => {
+        const snapshots = await getDocs(ref);
+        snapshots.forEach((doc) => {
           const d = { ...doc.data(), id:doc.id };
           docs.push(d);
         });
@@ -30,7 +30,7 @@ const Firestore = {
     return new Promise(async (resolve) => {
       const randomIndex = Math.floor(Math.random() * 1000000000);
       try {
-        const docRef = doc(db, "imagestock", `${randomIndex}`);
+        const docRef = doc(db, collection_name, `${randomIndex}`);
         await setDoc(docRef, {
           title: inputs.title,
           path: inputs.path,
@@ -38,7 +38,9 @@ const Firestore = {
           user: inputs.user,
         });
         resolve("new doc successfully inserted");
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      }
     });
   },
 };

@@ -9,10 +9,9 @@ const { uploadFile, downloadFile } = Storage;
 
 const Preview = () => {
   const { state } = useContext(Context);
-  const { currentUser } = useAuthContext();
   const {
     inputs: { path },
-  } = state;
+  } = state; // destructuring the current state
   return (
     path && (
       <div
@@ -20,7 +19,7 @@ const Preview = () => {
         style={{
           width: "30%",
           height: "300px",
-          backgroundImage: `url(${path}`,
+          backgroundImage: `url(${path})`,
           backgroundSize: "cover",
         }}
       ></div>

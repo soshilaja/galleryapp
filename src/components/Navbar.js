@@ -1,6 +1,7 @@
-import React, { useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
+import { useFirestoreContext } from "../context/FirestoreContext";
 
 const LogIn = () => {
   const { login, currentUser } = useAuthContext();
@@ -30,49 +31,54 @@ function Navigation() {
   return (
     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
       {/* remove all links except HOME */}
-      <li className="nav-item">
-        <Link
-          className={`nav-link ${pathname === "/" ? "active" : ""}`}
-          aria-current="page"
-          to="/"
-        >
-          Home
-        </Link>
-      </li>
+      <Link
+        className={`nav-link ${pathname === "/" ? "active" : ""}`}
+        aria-current="page"
+        to="/"
+      >
+        <li className="nav-item">Home</li>
+      </Link>
       {currentUser && (
-        <li className="nav-item">
-          <Link
-            className={`nav-link ${pathname === "/stocks" ? "active" : ""}`}
-            aria-current="page"
-            to="/stocks"
-          >
-            My Stocks
-          </Link>
-        </li>
+        <Link
+          className={`nav-link ${pathname === "/stocks" ? "active" : ""}`}
+          aria-current="page"
+          to="/stocks"
+        >
+          <li className="nav-item">My Stocks</li>
+        </Link>
       )}
       {currentUser && (
-        <li className="nav-item">
-          <Link
-            className={`nav-link ${pathname === "/profile" ? "active" : ""}`}
-            aria-current="page"
-            to="/profile"
-          >
-            Profile
-          </Link>
-        </li>
+        <Link
+          className={`nav-link ${pathname === "/profile" ? "active" : ""}`}
+          aria-current="page"
+          to="/profile"
+        >
+          <li className="nav-item">Profile</li>
+        </Link>
       )}
     </ul>
   );
 }
 
 function SearchForm() {
+  const [text, search] = useState(null);
+  const { filterItems: filter } = useFirestoreContext();
+  const handleOnChange = (e) => {
+    search(e.target.value);
+    filter(e.target.value);
+  };
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    filter(text);
+  };
   return (
-    <form className="d-flex">
+    <form className="d-flex" onSubmit={handleOnSubmit}>
       <input
         className="form-control me-2"
         type="search"
         placeholder="Search"
         aria-label="Search"
+        onChange={handleOnChange}
       />
       <button className="btn btn-outline-success" type="submit">
         Search
@@ -84,16 +90,12 @@ function SearchForm() {
 function Dropdown() {
   const { currentUser } = useAuthContext();
 
-  const username = useMemo(() => {
-    return currentUser?.displayname || "Profile";
-  }, [currentUser]);
-
   const avatar = useMemo(() => {
     return !!currentUser ? (
       <img
         className="avatar"
         src={currentUser?.photoURL}
-        alt={currentUser?.displayname}
+        alt={currentUser?.displayName}
         width="34"
         height="34"
       />
@@ -102,6 +104,9 @@ function Dropdown() {
     );
   }, [currentUser]);
 
+  const username = useMemo(() => {
+    return currentUser?.displayName || "Profile";
+  }, [currentUser]);
   return (
     <ul className="navbar-nav mb-2 mb-lg-0">
       {" "}
@@ -109,7 +114,6 @@ function Dropdown() {
       <li className="nav-item dropdown">
         <a
           className="nav-link dropdown-toggle"
-          href="/"
           id="navbarDropdown"
           role="button"
           data-bs-toggle="dropdown"
@@ -118,14 +122,16 @@ function Dropdown() {
           {avatar}
         </a>
         <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-          <li>
-            <a className="dropdown-item text-center" href="/">
-              {currentUser && <Link to="/profile">{username}</Link>}
-            </a>
-          </li>
-          <li>
-            <hr className="dropdown divider"></hr>
-          </li>
+          {currentUser && (
+            <li>
+              <span className="dropdown-item text-center">
+                <Link to="/profile">{username}</Link>
+              </span>
+              <span>
+                <hr className="dropdown divider" />
+              </span>
+            </li>
+          )}
           <div className="d-flex justify-content-center">
             <LogIn />
             <LogOut />
@@ -140,9 +146,7 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light mb-5">
       <div className="container-fluid">
-        <a className="navbar-brand" href="/">
-          ⚡ Galleria
-        </a>
+        <a className="navbar-brand">⚡ Galleria</a>
         <button
           className="navbar-toggler"
           type="button"
